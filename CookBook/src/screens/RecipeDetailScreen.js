@@ -1,47 +1,42 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { 
-  SafeAreaView, 
   ScrollView, 
   View, 
   Text, 
   TouchableOpacity, 
   Alert 
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useFavorites } from '../context/FavoritesContext';
 import RecipeDetailStyles from '../styles/RecipeDetailStyles';
 
 const RecipeDetailScreen = ({ route, navigation }) => {
-  // C.A. 2.1: Desestructuración desde route.params
   const { recipe } = route.params;
-  const [isFavorite, setIsFavorite] = useState(false);
+  const { toggleFavorite, isFavorite } = useFavorites();
+  const currentlyFavorite = isFavorite(recipe.id);
 
-  // C.A. 2.2: Actualización dinámica del título del header
   useEffect(() => {
     navigation.setOptions({ title: recipe.name });
   }, [navigation, recipe.name]);
 
-  const toggleFavorite = () => {
-    const newState = !isFavorite;
-    setIsFavorite(newState);
-    
-    // C.A. 2.4: Interactividad adicional (Alert de confirmación)
+  const handleToggle = () => {
+    toggleFavorite(recipe);
     Alert.alert(
-      newState ? 'Añadido a Favoritos' : 'Eliminado de Favoritos',
-      `${recipe.name} ha sido ${newState ? 'añadida a' : 'eliminada de'} tu lista de favoritos.`,
+      !currentlyFavorite ? 'Añadido a Favoritos' : 'Eliminado de Favoritos',
+      `${recipe.name} ha sido ${!currentlyFavorite ? 'añadida a' : 'eliminada de'} tu lista.`,
       [{ text: 'OK' }]
     );
   };
 
   return (
-    <SafeAreaView style={RecipeDetailStyles.container}>
+    <SafeAreaView style={RecipeDetailStyles.container} edges={['right', 'left', 'bottom']}>
       <ScrollView style={RecipeDetailStyles.scrollView} showsVerticalScrollIndicator={false}>
-        {/* Encabezado Visual */}
         <View style={RecipeDetailStyles.header}>
           <Text style={RecipeDetailStyles.emoji}>{recipe.emoji}</Text>
           <Text style={RecipeDetailStyles.title}>{recipe.name}</Text>
           <Text style={RecipeDetailStyles.category}>{recipe.category}</Text>
         </View>
 
-        {/* C.A. 2.3: Información Técnica */}
         <View style={RecipeDetailStyles.infoContainer}>
           <View style={RecipeDetailStyles.infoItem}>
             <Text style={RecipeDetailStyles.infoLabel}>Tiempo</Text>
@@ -53,17 +48,13 @@ const RecipeDetailScreen = ({ route, navigation }) => {
           </View>
         </View>
 
-        {/* Ingredientes */}
         <View style={RecipeDetailStyles.section}>
           <Text style={RecipeDetailStyles.sectionTitle}>Ingredientes</Text>
           {recipe.ingredients.map((ingredient, index) => (
-            <Text key={index} style={RecipeDetailStyles.ingredientItem}>
-              • {ingredient}
-            </Text>
+            <Text key={index} style={RecipeDetailStyles.ingredientItem}>• {ingredient}</Text>
           ))}
         </View>
 
-        {/* Pasos de Preparación */}
         <View style={RecipeDetailStyles.section}>
           <Text style={RecipeDetailStyles.sectionTitle}>Preparación</Text>
           {recipe.steps.map((step, index) => (
@@ -74,16 +65,12 @@ const RecipeDetailScreen = ({ route, navigation }) => {
           ))}
         </View>
 
-        {/* C.A. 2.4: Botón de Favorito (Interacción) */}
         <TouchableOpacity 
-          style={[
-            RecipeDetailStyles.favoriteButton,
-            isFavorite && RecipeDetailStyles.unfavoriteButton
-          ]}
-          onPress={toggleFavorite}
+          style={[RecipeDetailStyles.favoriteButton, currentlyFavorite && RecipeDetailStyles.unfavoriteButton]}
+          onPress={handleToggle}
         >
           <Text style={RecipeDetailStyles.favoriteButtonText}>
-            {isFavorite ? 'Quitar de Favoritos' : 'Marcar como Favorito'}
+            {currentlyFavorite ? 'Quitar de Favoritos' : 'Marcar como Favorito'}
           </Text>
         </TouchableOpacity>
       </ScrollView>

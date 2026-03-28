@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  SafeAreaView, 
   FlatList, 
   View, 
   Text, 
   TouchableOpacity, 
   ActivityIndicator 
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import recipesData from '../data/recipesData';
 import RecipeListStyles from '../styles/RecipeListStyles';
 
@@ -15,7 +15,6 @@ const RecipeListScreen = ({ navigation }) => {
   const [recipes, setRecipes] = useState([]);
 
   useEffect(() => {
-    // Simulación de carga desde API (C.A. 1.2)
     const loadRecipes = setTimeout(() => {
       setRecipes(recipesData);
       setLoading(false);
@@ -50,7 +49,7 @@ const RecipeListScreen = ({ navigation }) => {
   }
 
   return (
-    <SafeAreaView style={RecipeListStyles.container}>
+    <SafeAreaView style={RecipeListStyles.container} edges={['right', 'left', 'bottom']}>
       <FlatList
         data={recipes}
         keyExtractor={(item) => item.id}

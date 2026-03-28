@@ -4,6 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import StackNavigator from './StackNavigator';
 import AddRecipeScreen from '../screens/AddRecipeScreen';
 import CookingTipsScreen from '../screens/CookingTipsScreen';
+import FavoritesScreen from '../screens/FavoritesScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -36,6 +37,7 @@ const TabNavigator = () => {
           if (route.name === 'Recipes') icon = '📖';
           else if (route.name === 'AddRecipe') icon = '➕';
           else if (route.name === 'CookingTips') icon = '💡';
+          else if (route.name === 'Favorites') icon = '❤️';
           return <Text style={{ fontSize: size }}>{icon}</Text>;
         },
       })}
@@ -44,6 +46,11 @@ const TabNavigator = () => {
         name="Recipes" 
         component={StackNavigator} 
         options={{ title: 'Explorar' }} 
+      />
+      <Tab.Screen 
+        name="Favorites" 
+        component={FavoritesScreen} 
+        options={{ title: 'Favoritos', headerShown: true }} 
       />
       <Tab.Screen 
         name="AddRecipe" 
